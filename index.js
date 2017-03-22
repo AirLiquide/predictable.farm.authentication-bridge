@@ -31,7 +31,7 @@ app.get('/', function (req, res) {
     res.send('hello world')
 });
 
-app.listen(3000, function () {
+app.listen(3030, function () {
     console.log('Example app listening on port 3000!')
 })
 
@@ -46,6 +46,8 @@ io.on('connection', function(socket){
         socket.disconnect('unauthorized');
         console.log("User with no farmId tried to connect");
     }
+
+    console.log(farmId);
 
     if (keys[farmId]){
         var key = keys[farmId];
@@ -101,6 +103,7 @@ io.on('connection', function(socket){
                         farmSocket : socket,
                         dashboardSocket : dashboardSocket
                     }
+                    socket.emit('authenticated');
                 }
                 else {
                     socket.disconnect('unauthorized');
