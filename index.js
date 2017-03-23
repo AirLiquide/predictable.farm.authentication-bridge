@@ -91,7 +91,7 @@ io.on('connection', function(socket){
                         });
 
                         dashboardSocket.on('update-relay', function(data){
-                            clients[farmId].farmSocket.emit('update-relay',data);
+                            socket.emit('update-relay',data);
                         });
 
                         dashboardSocket.emit('hello',{});
@@ -115,7 +115,7 @@ io.on('connection', function(socket){
 
     socket.on('sensor-emit', function(data) {
         if (socket.auth){
-            clients[farmId].dashboardSocket.emit('sensor-emit',data);
+            clients[socket.farmId].dashboardSocket.emit('sensor-emit',data);
         }
 
     });
