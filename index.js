@@ -2,7 +2,7 @@
  * Created by admin on 20/03/2017.
  */
 
-var io = require('socket.io')(9000);
+var io = require('socket.io')(8080);
 var socketClient = require('socket.io-client');
 var express = require('express');
 var app = express();
@@ -10,10 +10,10 @@ var app = express();
 const crypto = require('crypto');
 
 var keys ={
-    "farm1" : { key : "6CDD52F686B19267942D35196583E", address : "http://localhost:8080"},
-    "farm2" : { key : "B91474D59DD358BAA85E3192A63A3", address : "http://localhost:8081"},
-    "farm3" : { key : "D85BD9CDA3AB58518AA963DF75F1D", address : "http://localhost:8082"},
-    "farm4" : { key : "425C75E3D29F9C32CADFD5FD8A7D7", address : "http://localhost:8083"}
+    "farm1" : { key : "6CDD52F686B19267942D35196583E", address : "http://35.158.65.142:8081"},
+    "farm2" : { key : "B91474D59DD358BAA85E3192A63A3", address : "http://35.158.65.142:8082"},
+    "farm3" : { key : "D85BD9CDA3AB58518AA963DF75F1D", address : "http://35.158.65.142:8083"},
+    "farm4" : { key : "425C75E3D29F9C32CADFD5FD8A7D7", address : "http://35.158.65.142:8084"}
 };
 /*
 {
@@ -31,9 +31,9 @@ app.get('/', function (req, res) {
     res.send('hello world')
 });
 
-app.listen(3030, function () {
-    console.log('Example app listening on port 3000!')
-})
+/*app.listen(3030, function () {
+    console.log('Example app listening on port 3030!')
+});*/
 
 io.on('connection', function(socket){
     console.log('a user connected');
@@ -90,13 +90,14 @@ io.on('connection', function(socket){
                             console.log("disconnected")
                         });
 
-                        setTimeout(function () {
-                            dashboardSocket.emit('hello',{});
-                        },100);
+                        dashboardSocket.on('update-relay', function(data){
+                            clients[farmId].farmSocket.emit('update-relay',data);
+                        });
+
+                        dashboardSocket.emit('hello',{});
+
                         console.log("bridge connected to dashboard " + farmId)
                     });
-
-
 
                     //add the couple farmSocket/socketDashboard to the dictionary
                     clients[farmId] = {
@@ -114,7 +115,7 @@ io.on('connection', function(socket){
 
     socket.on('sensor-emit', function(data) {
         if (socket.auth){
-            clients[socket.farmId].dashboardSocket.emit('sensor-emit',data);
+            clients[farmId].dashboardSocket.emit('sensor-emit',data);
         }
 
     });
