@@ -91,18 +91,15 @@ io.on('connection', function(socket){
                             });
 
                             dashboardSocket.on('sensor-receive', function(data){
-                                console.log("hey");
                                 socket.emit('sensor-receive',data);
                             });
 
                             dashboardSocket.on('init', function(){
-                                console.log("init");
+                                console.log("bridge connected to dashboard " + farmId)
+                                socket.emit('cloud-authenticated',data);
                             });
 
                             dashboardSocket.emit("hello");
-
-
-                            console.log("bridge connected to dashboard " + farmId)
                         });
 
                         //add the couple farmSocket/socketDashboard to the dictionary
