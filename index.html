@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Log-in</title>
+
+    <link rel="stylesheet" type="text/css" href="style.css" media="screen"/>
+    <meta name="google-signin-client_id" content="YOUR_CLIENT_ID.apps.googleusercontent.com">
+</head>
+<body>
+
+<div id="fb-root"></div>
+<script>(function (d, s, id) {
+    var js, fjs = d.getElementsByTagName(s)[0];
+    if (d.getElementById(id)) return;
+    js = d.createElement(s);
+    js.id = id;
+    js.src = "//connect.facebook.net/fr_FR/sdk.js#xfbml=1&version=v2.8&appId=1796043710625756";
+    fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
+
+
+<div id="connection-zone">
+    <div id="logo">
+        <img src="logo.png">
+    </div>
+    <div id="fast-connection-zone">
+
+        <div id="my-signin2"></div>
+        <div id="fb-login"><img class="clickable" src="fb-logo.png" onclick="FB.login()"/></div>
+    </div>
+    <div id="regular-connection-zone">
+        <form>
+            <div class="label">ID</div>
+            <input type="text" placeholder="e.g. , PredictableFarm">
+            <div class="label">Password</div>
+            <input type="text" placeholder="e.g. , ••••••••••••">
+        </form>
+
+    </div>
+
+    <div id="login-button" >
+        <a class = "link-fill" href="#">Log in</a>
+    </div>
+
+    <div id="connection-help">
+
+        <div id="forgot-password">
+            <a href="#">
+                Forgot your password?
+            </a>
+        </div>
+        <div id="signup">
+            <a href="#">
+                Don't have an account? Sign up!
+            </a>
+        </div>
+    </div>
+
+
+    <script>
+        function onSuccess(googleUser) {
+            console.log('Logged in as: ' + googleUser.getBasicProfile().getName());
+        }
+        function onFailure(error) {
+            console.log(error);
+        }
+        function renderButton() {
+            gapi.signin2.render('my-signin2', {
+                'scope': 'profile email',
+                'width': 400,
+                'height': 50,
+                'longtitle': true,
+                'theme': 'dark',
+                'onsuccess': onSuccess,
+                'onfailure': onFailure
+            });
+        }
+    </script>
+    <script src="https://apis.google.com/js/platform.js?onload=renderButton" async defer></script>
+</div>
+
+</body>
+</html>

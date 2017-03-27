@@ -2,12 +2,14 @@
  * Created by admin on 20/03/2017.
  */
 
-var io = require('socket.io')(8080);
+var io = require('socket.io')(8888);
 var socketClient = require('socket.io-client');
 var express = require('express');
 var app = express();
 
 const crypto = require('crypto');
+
+app.use(express.static('assets'));
 
 var keys ={
     "farm1" : { key : "6CDD52F686B19267942D35196583E", address : "http://35.158.65.142:8081"},
@@ -28,7 +30,7 @@ var clients = {
 var tokens = {};
 
 app.get('/', function (req, res) {
-    res.send('hello world')
+    res.sendFile(__dirname + '/index.html');
 });
 
 /*app.listen(3030, function () {
@@ -161,3 +163,5 @@ function encrypt(text, secret){
     var crypted = crypto.createHmac('sha256',secret).update(text).digest('hex');
     return crypted;
 }
+
+app.listen(3000);

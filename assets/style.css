@@ -1,0 +1,92 @@
+body{
+    font-family: "jaf-facitweb","Helvetica Neue",Arial,sans-serif;
+    font-size: 16px;
+    line-height: 1.44em;
+}
+
+img{
+    padding: 0;
+    margin: 0;
+}
+
+#connection-zone{
+    margin: 10% auto 0 auto;
+    width: 400px;
+    min-height: 500px;
+    border-radius: 5px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.45);
+    padding: 20px 50px;
+
+}
+
+#logo img{
+    display: block;
+    margin:  1.2em auto 1.2em auto;
+    max-height: 50px;
+    max-width: 50px;
+}
+
+#fast-connection-zone{
+    width: 400px;
+    margin:  0 auto 1.2em auto;
+}
+
+.fb-login-button{
+    display: inline-block;
+}
+.g-signin2{
+    display: inline-block;
+}
+.clickable{
+    cursor: pointer;
+}
+
+#regular-connection-zone{
+    width: 400px;
+    font-size: 20px;
+}
+
+#regular-connection-zone input{
+    width: 400px;
+    border-radius: 5px;
+    border: 1px solid #cdd2d4;
+    box-sizing: border-box;
+    font: inherit;
+    margin: 0 0 1.2em;
+    padding: .5em;
+}
+
+#login-button{
+    width: 100px;
+    margin:  0 auto 1.2em auto;
+    text-align: center;
+    background-color: #ADC169;
+    border-radius: 5px;
+    padding: .5em;
+    color: white;
+}
+
+a.link-fill {
+    display: block;
+    height: 100%;
+    width: 100%;
+    color: #FFFFFF;
+    text-decoration: none;
+}
+
+
+#connection-help{
+    text-align: center;
+    font-weight: bold;
+    font-size: 12px;
+    text-decoration: none;
+}
+
+#connection-help a {
+    color: #000000;
+    text-decoration: none;
+}
+#connection-help a:hover{
+    color: #ADC169;
+    text-decoration: underline;
+}
