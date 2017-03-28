@@ -2,7 +2,7 @@
  * Created by admin on 20/03/2017.
  */
 
-var io = require('socket.io')(8888);
+
 var socketClient = require('socket.io-client');
 const crypto = require('crypto');
 var express = require('express');
@@ -41,6 +41,7 @@ var clients = {
 var tokens = {};
 
 var app = express();
+var http = require('http').Server(app);
 
 app.use(session({
     key: 'session_cookie_name',
@@ -104,6 +105,8 @@ app.post('/login', function (req, res) {
 /*app.listen(3030, function () {
     console.log('Example app listening on port 3030!')
 });*/
+
+var io = require('socket.io').listen(http);
 
 io.on('connection', function(socket){
     console.log('a user connected');
@@ -241,4 +244,6 @@ function encrypt(text, secret){
     return crypted;
 }
 
-app.listen(3000);
+http.listen(3000, function(){
+    console.log('listening on *:3000');
+});
