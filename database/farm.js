@@ -75,6 +75,22 @@ var Farm = function () {
             }
         );
     };
+    // Load an action from id
+    this.loadFromName = function (farmName, callback) {
+        mapDb.query(
+            'SELECT * FROM farm WHERE farm_name = :farm_name',
+            {'farm_name': farmName},
+            function (err, rows) {
+                if (err) {
+                    throw(err);
+                }
+
+                if (callback) {
+                    callback(rows);
+                }
+            }
+        );
+    };
 };
 
 module.exports = Farm;

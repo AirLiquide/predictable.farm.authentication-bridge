@@ -12,6 +12,7 @@ var session = require('express-session');
 var MySQLStore = require('express-mysql-session')(session);
 
 var User = require('./database/user');
+var Farm = require('./database/farm');
 
 var options = {
     host: 'localhost',
@@ -96,7 +97,7 @@ app.post('/login', function (req, res) {
         else{
             console.log("erreur")
         }
-    })
+    });
     //console.log(req.body);
 });
 
@@ -116,86 +117,95 @@ io.on('connection', function(socket){
         console.log("User with no farmId tried to connect");
     }
 
-    if (keys[farmId]){
-        var key = keys[farmId];
-    }
-    else {
-        socket.disconnect('unauthorized');
-        console.log("User with wrong farmId tried to connect");
-    }
+    var farm = new Farm();
+    farm.loadFromName(farmId,function (res) {
+        var length = res.length;
+        if (length == 1){
+            var address = res[0].address;
+            var secret_key = res[0].secret_key;
+            var farm_name =  res[0].farm_name;
 
-    if (clients[farmId]) {
-        socket.disconnect('unauthorized');
-        console.log("User with an already registered farmID :", farmId);
-    }
-    else{
-        socket.farmId = farmId;
-        socket.authData = key;
-
-        var authKey = randomKey(128);
-        socket.authkey = authKey;
-
-        socket.emit("authenticate", authKey);
-        setTimeout(function(){
-            //If the socket didn't authenticate, disconnect it
-            if (!socket.auth) {
-                console.log("Disconnecting socket ", socket.id);
+            if (clients[farmId]) {
                 socket.disconnect('unauthorized');
+                console.log("User with an already registered farmID :", farmId);
             }
-        }, 1000);
+            else{
+                socket.farmId = farm_name;
+                socket.authData = {
+                    key : secret_key,
+                    address : address
+                };
 
-        socket.on('authenticate', function(data){
-            //check the auth data sent by the client
-            if (!socket.auth){
-                checkAuthToken(socket.authkey,data, socket.authData.key, function(err, success){
-                    if (!err && success){
-                        console.log("Authenticated socket ", socket.id);
-                        socket.auth = true;
+                var authKey = randomKey(128);
+                socket.authkey = authKey;
 
-                        //create the socket-client to the cloud dashboard
-                        var dashboardSocket = socketClient(socket.authData.address);
-                        dashboardSocket.on('connect', function(){
-                            dashboardSocket.on('disconnect', function(){
-                                console.log("disconnected")
-                            });
-
-                            dashboardSocket.on('sensor-receive', function(data){
-                                socket.emit('sensor-receive',data);
-                            });
-
-                            dashboardSocket.on('init', function(){
-                                console.log("bridge connected to dashboard " + farmId)
-                                socket.emit('cloud-authenticated',data);
-                            });
-
-                            dashboardSocket.emit("hello");
-                        });
-
-                        //add the couple farmSocket/socketDashboard to the dictionary
-                        clients[farmId] = {
-                            farmSocket : socket,
-                            dashboardSocket : dashboardSocket
-                        }
-                        socket.emit('authenticated');
-                    }
-                    else {
+                socket.emit("authenticate", authKey);
+                setTimeout(function(){
+                    //If the socket didn't authenticate, disconnect it
+                    if (!socket.auth) {
+                        console.log("Disconnecting socket ", socket.id);
                         socket.disconnect('unauthorized');
                     }
+                }, 1000);
+
+                socket.on('authenticate', function(data){
+                    //check the auth data sent by the client
+                    if (!socket.auth){
+                        checkAuthToken(socket.authkey,data, socket.authData.key, function(err, success){
+                            if (!err && success){
+                                console.log("Authenticated socket ", socket.id);
+                                socket.auth = true;
+
+                                //create the socket-client to the cloud dashboard
+                                var dashboardSocket = socketClient(address);
+                                dashboardSocket.on('connect', function(){
+                                    dashboardSocket.on('disconnect', function(){
+                                        console.log("disconnected")
+                                    });
+
+                                    dashboardSocket.on('sensor-receive', function(data){
+                                        socket.emit('sensor-receive',data);
+                                    });
+
+                                    dashboardSocket.on('init', function(){
+                                        console.log("bridge connected to dashboard " + farmId)
+                                        socket.emit('cloud-authenticated',data);
+                                    });
+
+                                    dashboardSocket.emit("hello");
+                                });
+
+                                //add the couple farmSocket/socketDashboard to the dictionary
+                                clients[farmId] = {
+                                    farmSocket : socket,
+                                    dashboardSocket : dashboardSocket
+                                }
+                                socket.emit('authenticated');
+                            }
+                            else {
+                                socket.disconnect('unauthorized');
+                            }
+                        });
+                    }
+                });
+
+                socket.on('sensor-emit', function(data) {
+                    if (socket.auth){
+                        clients[socket.farmId].dashboardSocket.emit('sensor-emit',data);
+                    }
+                });
+
+                socket.on('disconnect', function () {
+                    console.log(farmId, "disconnected at" , new Date());
                 });
             }
-        });
 
-        socket.on('sensor-emit', function(data) {
-            if (socket.auth){
-                clients[socket.farmId].dashboardSocket.emit('sensor-emit',data);
-            }
-        });
-
-        socket.on('disconnect', function () {
-            console.log(farmId, "disconnected at" , new Date());
-        });
-    }
-
+        }
+        else{
+            socket.disconnect('unauthorized');
+            console.log("User with wrong farmId tried to connect");
+        }
+    });
 });
 
 

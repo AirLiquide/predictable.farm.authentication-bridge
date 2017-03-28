@@ -44,9 +44,19 @@ SET `name`="farm2",
 INSERT INTO `farm`
 SET `farm_name`="farm1",
 	`address`="http://localhost:8080",
-	`secret_key`="aaaaaaaaaaaaaa";
+	`secret_key`="6CDD52F686B19267942D35196583E";
 
 INSERT INTO `farm`
 SET `farm_name`="farm2",
 	`address`="http://localhost:8081",
-	`secret_key`="aaaaaaaaaaaaaa";
+	`secret_key`="B91474D59DD358BAA85E3192A63A3";
+
+INSERT INTO `farm`
+SET `farm_name`="farm3",
+	`address`="http://localhost:8082",
+	`secret_key`="D85BD9CDA3AB58518AA963DF75F1D";
+
+INSERT INTO `farm`
+SET `farm_name`="farm4",
+	`address`="http://localhost:8083",
+	`secret_key`="425C75E3D29F9C32CADFD5FD8A7D7";
