@@ -1,0 +1,52 @@
+CREATE DATABASE predictablefarm;
+
+CREATE USER 'predictable_user'@'localhost' IDENTIFIED BY 'ilab';
+GRANT ALL PRIVILEGES ON map.* TO 'predictable_user'@'localhost';
+FLUSH PRIVILEGES;
+
+USE predictablefarm;
+
+# Farms
+DROP TABLE `farm`;
+CREATE TABLE `farm` (
+	`farm_id` INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+	`farm_name` TINYTEXT ,
+	`address` TINYTEXT ,
+	`secret_key` TINYTEXT
+)ENGINE=MyISAM;
+
+# Users
+DROP TABLE `user`;
+CREATE TABLE `user` (
+	`id_user` INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+	`name` TINYTEXT,
+	`password_hash` TINYTEXT,
+	`password_salt` TINYTEXT,
+	`farm_id` INT
+)ENGINE=MyISAM;
+
+################
+# TEST ENTRIES #
+################
+
+INSERT INTO `user`
+SET `name`="farm1",
+	`password_hash`=SHA1("test"),
+	`password_salt`="-salt",
+	`farm_id` = 1;
+
+INSERT INTO `user`
+SET `name`="farm2",
+	`password_hash`=SHA1("test"),
+	`password_salt`="-salt",
+	`farm_id` = 2;
+
+INSERT INTO `farm`
+SET `farm_name`="farm1",
+	`address`="http://localhost:8080",
+	`secret_key`="aaaaaaaaaaaaaa";
+
+INSERT INTO `farm`
+SET `farm_name`="farm2",
+	`address`="http://localhost:8081",
+	`secret_key`="aaaaaaaaaaaaaa";

@@ -66,20 +66,28 @@ img{
     color: white;
 }
 
-a.link-fill {
+#login-button:hover{
+    background-color: #BED27A;
+}
+#login-button:active{
+    background-color: #9CB058;
+}
+
+div.link-fill {
     display: block;
     height: 100%;
     width: 100%;
     color: #FFFFFF;
     text-decoration: none;
+    cursor: pointer;
 }
-
 
 #connection-help{
     text-align: center;
     font-weight: bold;
     font-size: 12px;
     text-decoration: none;
+
 }
 
 #connection-help a {

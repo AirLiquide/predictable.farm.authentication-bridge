@@ -4,12 +4,24 @@
 
 var io = require('socket.io')(8888);
 var socketClient = require('socket.io-client');
-var express = require('express');
-var app = express();
-
 const crypto = require('crypto');
+var express = require('express');
+var bodyParser = require('body-parser');
 
-app.use(express.static('assets'));
+var session = require('express-session');
+var MySQLStore = require('express-mysql-session')(session);
+
+var User = require('./database/user');
+
+var options = {
+    host: 'localhost',
+    port: 3306,
+    user: 'root',
+    password: 'root',
+    database: 'predictablefarm_cookies'
+};
+var sessionStore = new MySQLStore(options);
+
 
 var keys ={
     "farm1" : { key : "6CDD52F686B19267942D35196583E", address : "http://35.158.65.142:8081"},
@@ -18,19 +30,74 @@ var keys ={
     "farm4" : { key : "425C75E3D29F9C32CADFD5FD8A7D7", address : "http://35.158.65.142:8084"}
 };
 /*
-{
-farmId : { socket : farmSocket , dashboardSocket : socketDash }
-}
+ {
+ farmId : { socket : farmSocket , dashboardSocket : socketDash }
+ } */
 
- */
 var clients = {
 
-}
-
+};
 var tokens = {};
 
+var app = express();
+
+app.use(session({
+    key: 'session_cookie_name',
+    secret: 'session_cookie_secret',
+    store: sessionStore,
+    resave: true,
+    saveUninitialized: true
+}));
+
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
+
+app.use(express.static('public'));
+
 app.get('/', function (req, res) {
-    res.sendFile(__dirname + '/index.html');
+    if (req.session.userName && req.session.userId){
+        var user = new User();
+        user.getAddress(req.session.userId,function (callback) {
+            res.redirect(callback[0].address);
+        })
+    }
+    else{
+        res.sendFile(__dirname + '/index.html');
+    }
+
+});
+
+//login to the dashboard
+app.post('/login', function (req, res) {
+
+    var user = new User();
+    user.getUserByName(req.body.id, function(callbackData){
+        var data = callbackData[0];
+        var hash = data.password_hash;
+
+        var pass = req.body.pass;
+
+        var crypt = crypto.createHash('sha1');
+        crypt.update(pass);
+        var hashedPass = crypt.digest('hex');
+
+        if( hashedPass == hash){
+            user.getAddress(data.farm_id,function (callback) {
+                req.session.userName = data.name;
+                req.session.userId = data.id_user;
+                res.send({
+                    success : true,
+                    failure : false,
+                    address : callback[0].address
+                })
+            })
+
+        }
+        else{
+            console.log("erreur")
+        }
+    })
+    //console.log(req.body);
 });
 
 /*app.listen(3030, function () {
