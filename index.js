@@ -15,8 +15,8 @@ var User = require('./database/user');
 var Farm = require('./database/farm');
 
 var options = {
-    host: 'localhost',
-    port: 3306,
+    host: '35.158.65.142',
+        port: 3306,
     user: 'root',
     password: 'root',
     database: 'predictablefarm_cookies'
