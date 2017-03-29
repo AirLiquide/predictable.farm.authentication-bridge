@@ -2,7 +2,8 @@
  * Created by admin on 20/03/2017.
  */
 
-
+global.env = process.env.NODE_ENV || 'dev';
+console.log("Environment : ",global.env);
 var socketClient = require('socket.io-client');
 const crypto = require('crypto');
 var express = require('express');
@@ -15,7 +16,7 @@ var User = require('./database/user');
 var Farm = require('./database/farm');
 
 var options = {
-    host: '35.158.65.142',
+    host: (global.env =='prod') ?'35.158.65.142':'localhost',
         port: 3306,
     user: 'root',
     password: 'root',
@@ -26,7 +27,7 @@ var sessionStore = new MySQLStore(options);
 
 var keys ={
     "farm1" : { key : "6CDD52F686B19267942D35196583E", address : "http://35.158.65.142:8081"},
-    "farm2" : { key : "B91474D59DD358BAA85E3192A63A3", address : "http://35.158.65.142:8082"},
+    "farm2" : { key : "B91474D59DD  358BAA85E3192A63A3", address : "http://35.158.65.142:8082"},
     "farm3" : { key : "D85BD9CDA3AB58518AA963DF75F1D", address : "http://35.158.65.142:8083"},
     "farm4" : { key : "425C75E3D29F9C32CADFD5FD8A7D7", address : "http://35.158.65.142:8084"}
 };
@@ -74,30 +75,40 @@ app.post('/login', function (req, res) {
 
     var user = new User();
     user.getUserByName(req.body.id, function(callbackData){
-        var data = callbackData[0];
-        var hash = data.password_hash;
+        var length = callbackData.length;
+        if (length == 1){
+            var data = callbackData[0];
+            var hash = data.password_hash;
 
-        var pass = req.body.pass;
+            var pass = req.body.pass;
 
-        var crypt = crypto.createHash('sha1');
-        crypt.update(pass);
-        var hashedPass = crypt.digest('hex');
+            var crypt = crypto.createHash('sha1');
+            crypt.update(pass);
+            var hashedPass = crypt.digest('hex');
 
-        if( hashedPass == hash){
-            user.getAddress(data.farm_id,function (callback) {
-                req.session.userName = data.name;
-                req.session.userId = data.id_user;
-                res.send({
-                    success : true,
-                    failure : false,
-                    address : callback[0].address
+            if( hashedPass == hash){
+                user.getAddress(data.farm_id,function (callback) {
+                    req.session.userName = data.name;
+                    req.session.userId = data.id_user;
+                    res.send({
+                        success : true,
+                        failure : false,
+                        address : callback[0].address
+                    })
                 })
-            })
 
+            }
+            else{
+                console.log("erreur")
+            }
         }
-        else{
-            console.log("erreur")
+        else {
+            res.send({
+                success : false,
+                failure : true
+            })
         }
+
     });
     //console.log(req.body);
 });

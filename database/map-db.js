@@ -1,7 +1,8 @@
 var MariaSql = require('mariasql');
 
 // Db access info
-var DB_HOST = 'localhost';
+
+var DB_HOST = (global.env == 'prod')?'35.158.65.142':"localhost";
 var DB_USER = 'root';
 var DB_PASS = 'root';
 var DB_NAME = 'predictablefarm';
