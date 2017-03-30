@@ -16,7 +16,7 @@ var User = require('./database/user');
 var Farm = require('./database/farm');
 
 var options = {
-    host: (global.env =='prod') ?'35.158.65.142':'localhost',
+    host: (global.env =='prod') ?'my.predictable.farm':'localhost',
         port: 3306,
     user: 'root',
     password: 'root',
@@ -24,13 +24,6 @@ var options = {
 };
 var sessionStore = new MySQLStore(options);
 
-
-var keys ={
-    "farm1" : { key : "6CDD52F686B19267942D35196583E", address : "http://35.158.65.142:8081"},
-    "farm2" : { key : "B91474D59DD  358BAA85E3192A63A3", address : "http://35.158.65.142:8082"},
-    "farm3" : { key : "D85BD9CDA3AB58518AA963DF75F1D", address : "http://35.158.65.142:8083"},
-    "farm4" : { key : "425C75E3D29F9C32CADFD5FD8A7D7", address : "http://35.158.65.142:8084"}
-};
 /*
  {
  farmId : { socket : farmSocket , dashboardSocket : socketDash }
