@@ -16,7 +16,7 @@ var User = require('./database/user');
 var Farm = require('./database/farm');
 
 var options = {
-    host: (global.env =='prod') ?'my.predictable.farm':'localhost',
+    host: (global.env =='prod') ?'predictable.farm':'localhost',
         port: 3306,
     user: 'root',
     password: 'root',
@@ -32,7 +32,6 @@ var sessionStore = new MySQLStore(options);
 var clients = {
 
 };
-var tokens = {};
 
 var app = express();
 var http = require('http').Server(app);
