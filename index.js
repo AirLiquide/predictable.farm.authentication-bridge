@@ -16,7 +16,7 @@ var User = require('./database/user');
 var Farm = require('./database/farm');
 
 var options = {
-    host: (global.env =='prod') ?'predictable.farm':'localhost',
+    host: (global.env =='prod') ?'35.158.33.67':'localhost',
         port: 3306,
     user: 'root',
     password: 'root',
