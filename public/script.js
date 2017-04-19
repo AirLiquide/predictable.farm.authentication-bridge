@@ -18,7 +18,7 @@ function login() {
             console.log(res);
             if (res.success){
                 console.log("hey");
-                window.location.href = res.address;
+                window.location.reload();
             }
         };
 

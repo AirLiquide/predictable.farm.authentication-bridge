@@ -202,6 +202,43 @@ var User = function () {
         );
     };
 
+    this.getAddressByName = function (userID , callback) {
+        mapDb.query(
+            'SELECT f.address ' +
+            'FROM user u ' +
+            'INNER JOIN farm f ' +
+            'ON f.farm_id = u.farm_id '+
+            'WHERE u.name = \''+userID+"\'",
+            function (err, rows) {
+                if (err) {
+                    throw(err);
+                }
+
+                if (callback) {
+                    callback(rows);
+                }
+            }
+        );
+    };
+
+    this.getUserAdrressList = function (callback) {
+        mapDb.query(
+            'SELECT u.name, f.address ' +
+            'FROM user u ' +
+            'INNER JOIN farm f ' +
+            'ON f.farm_id = u.farm_id ',
+            function (err, rows) {
+                if (err) {
+                    throw(err);
+                }
+
+                if (callback) {
+                    callback(rows);
+                }
+            }
+        );
+    };
+
     this.getUserByName = function (userName , callback) {
         mapDb.query(
             'SELECT * ' +
