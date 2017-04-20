@@ -15,9 +15,7 @@ Ports :
 Needs a mariaDB database to run, to handle cookies for http queries. You can find the default .sql files to use in the docs.
 Database structure :
 farm :
-| farm_id        | farm_name           | address  | secret_key
-| ------------- |:-------------:| -----:|-----:|
+| farm_id        | farm_name           | address  | secret_key |
 
 user:
-| id_user        | name           | password_hash  | password_salt | farm_id
-| ------------- |:-------------:|:----:|:-----:|-----:|
+| id_user        | name           | password_hash  | password_salt | farm_id |
