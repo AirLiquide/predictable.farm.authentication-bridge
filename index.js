@@ -38,7 +38,7 @@ setInterval(function () {
     u.getUserAdrressList(function (data) {
         storeAddressList(data);
     })
-}, 1000 * 60);
+}, 1000 * 60 * 5 );
 
 function storeAddressList(data) {
     for (var i = 0; i < data.length; i++) {
@@ -50,7 +50,7 @@ function storeAddressList(data) {
 
 
 var clients = {};
-var proxy = require('redbird')({port: 8000});
+var proxy = require('redbird')({port: 3000});
 var topPriority = function (host, url) {
     //SOCKET//
     var check = /\/socket\.io\/\?farmId=([a-zA-Z0-9]+)&/.test(url);
@@ -175,8 +175,8 @@ app.post('/login', function (req, res) {
     //console.log(req.body);
 });
 
-app.listen(3000, function () {
-    console.log('listening on *:3000');
+app.listen(80, function () {
+    console.log('listening on *:80');
 });
 
 /**
