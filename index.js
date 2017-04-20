@@ -179,7 +179,7 @@ app.listen(3000, function () {
     console.log('listening on *:3000');
 });
 
-
+/**
 //WILL BE REMOVED, USELESS NOW WITH THE REVERSE PROXY
 // will be placed on the farm or the website.
 var io = require('socket.io').listen(http);
@@ -285,7 +285,7 @@ io.on('connection', function (socket) {
             console.log("User with wrong farmId tried to connect");
         }
     });
-});
+});**/
 
 
 //UTILS
