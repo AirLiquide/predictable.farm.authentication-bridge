@@ -175,7 +175,7 @@ app.post('/login', function (req, res) {
     //console.log(req.body);
 });
 
-app.listen(8080, function () {
+app.listen(80, function () {
     console.log('listening on *:80');
 });
 
