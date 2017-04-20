@@ -50,7 +50,7 @@ function storeAddressList(data) {
 
 
 var clients = {};
-var proxy = require('redbird')({port: 3000});
+var proxy = require('redbird')({port: 3001});
 var topPriority = function (host, url) {
     //SOCKET//
     var check = /\/socket\.io\/\?farmId=([a-zA-Z0-9]+)&/.test(url);
@@ -175,7 +175,7 @@ app.post('/login', function (req, res) {
     //console.log(req.body);
 });
 
-app.listen(80, function () {
+app.listen(8080, function () {
     console.log('listening on *:80');
 });
 
