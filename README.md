@@ -52,3 +52,5 @@ docs.
 | password_salt|
 | farm_id |
 
+
+Documentation complète :  https://docs.google.com/document/d/1_SxayDKO30vMWrVTCxJiv7SGgChcJP5q2pF0UntlBh4/
