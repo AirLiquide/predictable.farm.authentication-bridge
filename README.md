@@ -42,7 +42,9 @@ docs.
 | address |
 | secret_key |
 
+farm_name : Name of the farm for identification
 
+address : web address to redirect to for the cloud
 
 |  user |
 | ------------- |
@@ -51,6 +53,8 @@ docs.
 | password_hash |
 | password_salt|
 | farm_id |
+
+farm_id : id of the farm to connect to.
 
 
 Documentation complète :  https://docs.google.com/document/d/1_SxayDKO30vMWrVTCxJiv7SGgChcJP5q2pF0UntlBh4/
