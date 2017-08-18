@@ -4,7 +4,6 @@
 
 global.env = process.env.NODE_ENV || 'dev';
 console.log("Environment : ", global.env);
-var socketClient = require('socket.io-client');
 const crypto = require('crypto');
 var express = require('express');
 var bodyParser = require('body-parser');
@@ -15,13 +14,16 @@ var MySQLStore = require('express-mysql-session')(session);
 var User = require('./database/user');
 var Farm = require('./database/farm');
 
+
+//TODO : change addresses
 var options = {
     host: (global.env == 'prod') ? '35.158.33.67' : 'localhost',
     port: 3306,
     user: 'root',
-    password: 'root',
+    password: '',
     database: 'predictablefarm_cookies'
 };
+
 var sessionStore = new MySQLStore(options);
 
 /*
@@ -29,55 +31,9 @@ var sessionStore = new MySQLStore(options);
  farmId : { socket : farmSocket , dashboardSocket : socketDash }
  } */
 
-var userData = {};
-new User().getUserAdrressList(function (data) {
-    storeAddressList(data);
-})
-setInterval(function () {
-    var u = new User();
-    u.getUserAdrressList(function (data) {
-        storeAddressList(data);
-    })
-}, 1000 * 60 * 5 );
-
-function storeAddressList(data) {
-    for (var i = 0; i < data.length; i++) {
-        //console.log(data[i].name,data[i].address)
-        userData[data[i].name] = data[i].address;
-    }
-    //console.log(userData)
-}
-
-
-var clients = {};
-var proxy = require('redbird')({port: 3000});
-var topPriority = function (host, url) {
-    //SOCKET//
-    var check = /\/socket\.io\/\?farmId=([a-zA-Z0-9]+)&/.test(url);
-
-    if (check) {
-        var res = url.match(/\?farmId=([a-zA-Z0-9]+)&/);
-        var farmId = res[1];
-        return userData[farmId];
-    }
-
-    else
-        return host;
-};
-
-topPriority.priority = 200;
-proxy.addResolver(topPriority);
-
 
 var app = express();
-var http = require('http').Server(app);
 
-var httpProxy = require('http-proxy');
-
-//
-// Create a proxy server with custom application logic
-//
-var webProxy = httpProxy.createProxyServer({});
 
 app.use(session({
     key: 'session_cookie_name',
@@ -89,10 +45,22 @@ app.use(session({
 
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json());
+app.use("/auth_public", express.static('public'));
+app.set('view engine', 'ejs');
 
-app.use(express.static('public'));
+var auth = require('http-auth');
+var basic = auth.basic({
+        realm: "Simon Area."
+    }, function (username, password, callback) {
+        // Custom authentication
+        // Use callback(error) if you want to throw async error.
+        callback(username === "Tina" && password === "Bullock");
+    }
+);
 
-app.use(function(req, res, next) {
+app.use('/admin', auth.connect(basic));
+
+app.use(function (req, res, next) {
     res.header('Access-Control-Allow-Credentials', true);
     res.header('Access-Control-Allow-Origin', req.headers.origin);
     res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
@@ -100,43 +68,109 @@ app.use(function(req, res, next) {
     next();
 });
 
-app.use(function (req, res, next) {
 
-    var datas = getData(req);
-
-    //console.log(req.url);
-    if (datas.name && datas.id)
-    {
-        var farmId = datas.name;
-        var farmAddress = userData[farmId];
-        console.log(req.url, farmAddress, req.session.userName)
-        webProxy.web(req, res, {target: farmAddress });
-    }
-    else{
-        next();
-    }
-        //res.redirect('http://localhost:8080');
-});
-
-function getData(req) {
-
-    var name = req.session.userName;
-    var id = req.session.userId;
-
-    return {
-        name : name,
-        id : id}
-}
-
-app.get('/', function (req, res) {
-
+//Registration, do not make public
+app.get('/register/Jxzipgg4gXM43x6y9M1JLCED9oLy13', function (req, res) {
     res.sendFile(__dirname + '/index.html');
 });
-//login to the dashboard
-app.post('/login', function (req, res) {
 
+app.get('/api/user/status', function (req, res) {
+    var myFarms = req.session.userFarms;
+    var requestedFarm = req.query.url;
+    var response;
+
+    if (!req.session.userId) {
+        res.json({status: "not_connected"});
+        return;
+    }
+
+
+    if (!requestedFarm) {
+        res.json({farms: myFarms});
+        return;
+    }
+    else {
+        for (var i = 0; i < myFarms.length; i++) {
+            if (myFarms[i].address == requestedFarm) {
+                res.json({status: "access_granted"});
+                return;
+            }
+        }
+        res.json({status: "no_access_to_farm"});
+        return;
+    }
+});
+
+app.get('/logout', function (req, res) {
+    req.session.destroy(function () {
+        res.redirect("/?message=logout_success");
+    })
+});
+
+//login to the dashboard
+app.get('/login', function (req, res) {
+    console.log(req.query);
+    res.render("login", {message: req.query.message});
+
+});
+
+
+app.get('/admin', function (req, res) {
+    var f = new Farm();
+    f.getFarms(function (rows) {
+        var farms = []
+
+        rows.forEach(function (el) {
+            farms.push({
+                farm_id: el.farm_id,
+                farm_name: el.farm_name
+            })
+            console.log(el)
+
+        })
+        res.render("admin", {
+            farms: farms,
+            message:req.query.message
+        });
+    })
+
+
+});
+
+app.post('/admin/add-user', function (req, res) {
+    var data = req.body;
+    console.log(data)
+
+    var u = new User();
+    u.addNewEntry(data,function () {
+        res.redirect("/admin?message=user_registered");
+
+    })
+
+});
+
+
+app.post('/admin/add-farm', function (req, res) {
+    var data = req.body;
+    console.log(data);
+
+    var f = new Farm();
+    f.addNewEntry(data,function () {
+        res.redirect("/admin?message=farm_registered");
+
+    })
+
+
+
+});
+
+
+app.post('/login', function (req, res) {
+    console.log("login request", req.query);
     var user = new User();
-    user.getUserByName(req.body.id, function (callbackData) {
+    user.getUserByName(req.body.username, function (callbackData) {
+
+        console.log("req", req.body);
         var length = callbackData.length;
         if (length == 1) {
             var data = callbackData[0];
@@ -147,178 +181,41 @@ app.post('/login', function (req, res) {
             var crypt = crypto.createHash('sha1');
             crypt.update(pass);
             var hashedPass = crypt.digest('hex');
-
             if (hashedPass == hash) {
-                user.getAddress(data.farm_id, function (callback) {
+
+                user.getAddress(data.farm_id, function (farms) {
+                    console.log(farms);
                     req.session.userName = data.name;
                     req.session.userId = data.id_user;
-                    res.send({
-                        success: true,
-                        failure: false,
-                        address: callback[0].address
-                    })
+                    req.session.userFarms = farms;
+                    console.log(req.host);
+
+                    for (var i = 0; i < farms.length; i++) {
+                        if (farms[i].address == req.host) {
+                            res.redirect("/?message=connected");
+
+                            return;
+                        }
+                    }
+                    res.redirect("/?message=no_access_to_farm");
+
+                    return;
                 })
 
             }
             else {
-                console.log("erreur")
+                console.log("erreur");
+                res.redirect("/?message=incorrect_password");
             }
         }
         else {
-            res.send({
-                success: false,
-                failure: true
-            })
+            res.redirect("/?message=unkown_user");
         }
 
     });
     //console.log(req.body);
 });
 
-app.listen((global.env == 'prod')? 80:8000, function () {
+app.listen((global.env == 'prod') ? 80 : 8000, function () {
     console.log('listening on *:80');
 });
-
-/**
-//WILL BE REMOVED, USELESS NOW WITH THE REVERSE PROXY
-// will be placed on the farm or the website.
-var io = require('socket.io').listen(http);
-
-io.on('connection', function (socket) {
-    console.log('a user connected');
-    socket.auth = false;
-
-    if (socket.handshake.query.farmId) {
-        var farmId = socket.handshake.query.farmId;
-    }
-    else {
-        socket.disconnect('unauthorized');
-        console.log("User with no farmId tried to connect");
-    }
-
-    var farm = new Farm();
-    farm.loadFromName(farmId, function (res) {
-        var length = res.length;
-        if (length == 1) {
-            var address = res[0].address;
-            var secret_key = res[0].secret_key;
-            var farm_name = res[0].farm_name;
-
-            if (clients[farmId]) {
-                socket.disconnect('unauthorized');
-                console.log("User with an already registered farmID :", farmId);
-            }
-            else {
-                socket.farmId = farm_name;
-                socket.authData = {
-                    key: secret_key,
-                    address: address
-                };
-
-                var authKey = randomKey(128);
-                socket.authkey = authKey;
-
-                socket.emit("authenticate", authKey);
-                setTimeout(function () {
-                    //If the socket didn't authenticate, disconnect it
-                    if (!socket.auth) {
-                        console.log("Disconnecting socket ", socket.id);
-                        socket.disconnect('unauthorized');
-                    }
-                }, 1000);
-
-                socket.on('authenticate', function (data) {
-                    //check the auth data sent by the client
-                    if (!socket.auth) {
-                        checkAuthToken(socket.authkey, data, socket.authData.key, function (err, success) {
-                            if (!err && success) {
-                                console.log("Authenticated socket ", socket.id);
-                                socket.auth = true;
-
-                                //create the socket-client to the cloud dashboard
-                                var dashboardSocket = socketClient(address);
-                                dashboardSocket.on('connect', function () {
-                                    dashboardSocket.on('disconnect', function () {
-                                        console.log("disconnected")
-                                    });
-
-                                    dashboardSocket.on('sensor-receive', function (data) {
-                                        socket.emit('sensor-receive', data);
-                                    });
-
-                                    dashboardSocket.on('init', function () {
-                                        console.log("bridge connected to dashboard " + farmId)
-                                        socket.emit('cloud-authenticated', data);
-                                    });
-
-                                    dashboardSocket.emit("hello");
-                                });
-
-                                //add the couple farmSocket/socketDashboard to the dictionary
-                                clients[farmId] = {
-                                    farmSocket: socket,
-                                    dashboardSocket: dashboardSocket
-                                }
-                                socket.emit('authenticated');
-                            }
-                            else {
-                                socket.disconnect('unauthorized');
-                            }
-                        });
-                    }
-                });
-
-                socket.on('sensor-emit', function (data) {
-                    if (socket.auth) {
-                        clients[socket.farmId].dashboardSocket.emit('sensor-emit', data);
-                    }
-                });
-
-                socket.on('disconnect', function () {
-                    console.log(farmId, "disconnected at", new Date());
-                });
-            }
-
-        }
-        else {
-            socket.disconnect('unauthorized');
-            console.log("User with wrong farmId tried to connect");
-        }
-    });
-});**/
-
-
-//UTILS
-
-function checkAuthToken(authKey, token, secret, callback) {
-
-    var encrypted = encrypt(authKey, secret);
-
-    if (encrypted == token) {
-        callback(false, true);
-    }
-    else {
-        callback(true, false);
-    }
-
-}
-
-function randomKey(howMany, chars) {
-    chars = chars
-        || "abcdefghijklmnopqrstuwxyzABCDEFGHIJKLMNOPQRSTUWXYZ0123456789";
-    var rnd = crypto.randomBytes(howMany)
-        , value = new Array(howMany)
-        , len = chars.length;
-
-    for (var i = 0; i < howMany; i++) {
-        value[i] = chars[rnd[i] % len]
-    }
-
-    return value.join('');
-}
-
-function encrypt(text, secret) {
-    var crypted = crypto.createHmac('sha256', secret).update(text).digest('hex');
-    return crypted;
-}
-

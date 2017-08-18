@@ -91,6 +91,46 @@ var Farm = function () {
             }
         );
     };
+
+    this.getFarms = function (callback) {
+        mapDb.query(
+            'SELECT farm_id,farm_name FROM farm',
+            function (err, rows) {
+                if (err) {
+                    throw(err);
+                }
+
+                if (callback) {
+                    callback(rows);
+                }
+            }
+        );
+    };
+
+    this.addNewEntry = function (data,callback) {
+        mapDb.query(
+            "INSERT INTO farm\
+            SET farm_name = :farm_name,\
+                address = :address,\
+                secret_key = :secret_key",
+            {
+                farm_name: data.farm_name,
+                address: data.address,
+                secret_key: data.secret_key
+            },
+            function (err, rows) {
+                if (err) {
+                    throw(err);
+                }
+
+                values.farmID = rows.info.insertId;
+
+                if (callback) {
+                    callback();
+                }
+            }
+        );
+    };
 };
 
 module.exports = Farm;

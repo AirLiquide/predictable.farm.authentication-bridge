@@ -44,7 +44,7 @@ SET `name`="farm2",
 
 INSERT INTO `farm`
 SET `farm_name`="farm1",
-	`address`="http://localhost:8080",
+	`address`="http://localhost: ",
 	`secret_key`="6CDD52F686B19267942D35196583E";
 
 INSERT INTO `farm`

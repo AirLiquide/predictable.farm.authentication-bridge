@@ -10,7 +10,7 @@ img{
 }
 
 #connection-zone{
-    margin: 10% auto 0 auto;
+    margin: 5% auto 0 auto;
     width: 400px;
     min-height: 500px;
     border-radius: 5px;
@@ -46,7 +46,7 @@ img{
     font-size: 20px;
 }
 
-#regular-connection-zone input{
+#regular-connection-zone input,#add-farm-zone input,#add-user-zone input, select{
     width: 400px;
     border-radius: 5px;
     border: 1px solid #cdd2d4;
@@ -56,7 +56,11 @@ img{
     padding: .5em;
 }
 
-#login-button{
+select{
+    height: 41px;
+}
+
+#login-button,#add-farm, #add-user {
     width: 100px;
     margin:  0 auto 1.2em auto;
     text-align: center;
@@ -66,10 +70,22 @@ img{
     color: white;
 }
 
-#login-button:hover{
-    background-color: #BED27A;
+#login-button input,#add-farm input, #add-user input {
+    background: transparent;
+    border: none;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+    height: 100%;
+    width: 100%;
+
+
 }
-#login-button:active{
+#login-button:hover,#add-farm:hover, #add-user:hover {
+    background-color: #BED27A;
+    cursor: pointer;
+}
+#login-button:active,#add-farm:active, #add-user:active{
     background-color: #9CB058;
 }
 
@@ -97,4 +113,14 @@ div.link-fill {
 #connection-help a:hover{
     color: #ADC169;
     text-decoration: underline;
+}
+
+.notification {
+    width: 100%;
+    text-align: center;
+    background-color: lightblue;
+border: 1px solid lightskyblue;
+    border-radius: 5px;
+    margin-bottom: 10px;
+    color: #555;
 }

@@ -2,7 +2,7 @@ var mapDb = require('./map-db');
 var crypto = require('crypto');
 
 var User = function () {
-    var _table = 'map_machine';
+    var _table = 'user';
     var _fields = ['id_user', 'name', 'password_hash', 'password_salt', 'farm_id'];
     var _ids = ['id_user']; // Identifier fields
     var _autoIncrement = true; // set to true if the id field is autoincrement
@@ -185,7 +185,7 @@ var User = function () {
 
     this.getAddress = function (userID , callback) {
         mapDb.query(
-            'SELECT f.address ' +
+            'SELECT f.farm_name as name, f.address ' +
             'FROM user u ' +
             'INNER JOIN farm f ' +
             'ON f.farm_id = u.farm_id '+
@@ -282,6 +282,63 @@ var User = function () {
 
         return (hashed === _values.passwordHash);
     };
+
+    this.addNewEntry = function (data,callback) {
+        var salt = makeid();
+        mapDb.query(
+            "INSERT INTO user\
+            SET name = :user_name,\
+                password_hash = SHA1(:password),\
+                password_salt = :password_salt,\
+                farm_id = :farm_id",
+            {
+                name: data.user_name,
+                password_hash: data.password_hash,
+                password_salt: salt,
+                farm_id: data.farm_id
+            },
+            function (err, rows) {
+                if (err) {
+                    throw(err);
+                }
+
+                //values.farmID = rows.info.insertId;
+
+                if (callback) {
+                    callback();
+                }
+            }
+        );
+
+        /*mapDb.query(
+            query,
+            values,
+            function (err, rows) {
+                if (err) {
+                    throw(err);
+                }
+
+                // autoincrement fetching
+                if (_autoIncrement) {
+                    _values[_ids[0]] = rows.info.insertId;
+                }
+
+                if (callback) {
+                    callback();
+                }
+            }
+        );*/
+    };
+
+    function makeid() {
+        var text = "";
+        var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+
+        for (var i = 0; i < 5; i++)
+            text += possible.charAt(Math.floor(Math.random() * possible.length));
+
+        return text;
+    }
 };
 
 module.exports = User;
