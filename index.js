@@ -54,7 +54,7 @@ var basic = auth.basic({
     }, function (username, password, callback) {
         // Custom authentication
         // Use callback(error) if you want to throw async error.
-        callback(username === "Tina" && password === "Bullock");
+        callback(username === "admin" && password === "LaFactoryLedruRollin91");
     }
 );
 
