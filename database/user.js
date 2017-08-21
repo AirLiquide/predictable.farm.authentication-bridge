@@ -183,7 +183,7 @@ var User = function () {
                     );
     };
 
-    this.data = function (userID , callback) {
+    this.getFarms = function (userID , callback) {
         mapDb.query(
                     'SELECT f.farm_name as name, f.address as address ' +
                     'FROM user u ' +
