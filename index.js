@@ -139,13 +139,18 @@ app.get('/admin', function (req, res) {
 
 app.post('/admin/add-user', function (req, res) {
     var data = req.body;
-    console.log(data)
+    console.log(data);
 
     var u = new User();
-    u.addNewEntry(data,function () {
+    u.addNewEntry(data,function (err, rows) {
+        if(err){
+            console.log(err);
+            res.redirect("/admin?message=user_not_registered");
+            return;
+        }
+        console.log(rows);
         res.redirect("/admin?message=user_registered");
-
-    })
+    });
 
 });
 
@@ -155,7 +160,12 @@ app.post('/admin/add-farm', function (req, res) {
     console.log(data);
 
     var f = new Farm();
-    f.addNewEntry(data,function () {
+    f.addNewEntry(data,function (err, rows) {
+        if(err){
+            console.log(err);
+            res.redirect("/admin?message=user_not_registered");
+            return;
+        }
         res.redirect("/admin?message=farm_registered");
 
     })

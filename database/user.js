@@ -305,7 +305,7 @@ var User = function () {
                 //values.farmID = rows.info.insertId;
 
                 if (callback) {
-                    callback();
+                    callback(err, rows);
                 }
             }
         );
