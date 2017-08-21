@@ -57,7 +57,7 @@ img{
 }
 
 select{
-    height: 41px;
+    height: 100px;
 }
 
 #login-button,#add-farm, #add-user {
