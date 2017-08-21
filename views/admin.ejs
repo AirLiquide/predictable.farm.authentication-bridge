@@ -23,11 +23,11 @@
         <div id="add-user-zone">
 
             <div class="label">Name</div>
-            <input id="input-id" name="name" type="text" placeholder="e.g. , Mr. Manager" required>
+            <input id="input-id" name="username" type="text" placeholder="e.g. , Mr. Manager" required>
             <div class="label">Password</div>
             <input id="input-pswd" name="password" type="text" placeholder="e.g. , password" required>
             <div class="label">Farm</div>
-            <select id="select" name="farm_id" required>
+            <select id="select" name="farms[]" multiple required>
                 <% for(var i=0; i<farms.length; i++) {%>
                 <option value= <%=farms[i].farm_id%>><%=farms[i].farm_name%></option>
                 <% } %>

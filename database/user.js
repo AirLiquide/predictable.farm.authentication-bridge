@@ -62,18 +62,18 @@ var User = function () {
         }
 
         mapDb.query(
-            query,
-            ids,
-            function (err, rows) {
-                if (err) {
-                    throw(err);
-                }
+                    query,
+                    ids,
+                    function (err, rows) {
+                        if (err) {
+                            throw(err);
+                        }
 
-                if (rows.length > 0) {
-                    loadFromRow(rows[0]);
-                }
-            }
-        );
+                        if (rows.length > 0) {
+                            loadFromRow(rows[0]);
+                        }
+                    }
+                    );
     };
 
     // Load a table row data into the object
@@ -101,23 +101,23 @@ var User = function () {
         }
 
         mapDb.query(
-            query,
-            values,
-            function (err, rows) {
-                if (err) {
-                    throw(err);
-                }
+                    query,
+                    values,
+                    function (err, rows) {
+                        if (err) {
+                            throw(err);
+                        }
 
-                // autoincrement fetching
-                if (_autoIncrement) {
-                    _values[_ids[0]] = rows.info.insertId;
-                }
+                        // autoincrement fetching
+                        if (_autoIncrement) {
+                            _values[_ids[0]] = rows.info.insertId;
+                        }
 
-                if (callback) {
-                    callback();
-                }
-            }
-        );
+                        if (callback) {
+                            callback();
+                        }
+                    }
+                    );
     };
 
     // Update the object values into db
@@ -147,18 +147,18 @@ var User = function () {
         }
 
         mapDb.query(
-            query,
-            values,
-            function (err) {
-                if (err) {
-                    throw(err);
-                }
+                    query,
+                    values,
+                    function (err) {
+                        if (err) {
+                            throw(err);
+                        }
 
-                if (callback) {
-                    callback();
-                }
-            }
-        );
+                        if (callback) {
+                            callback();
+                        }
+                    }
+                    );
     };
 
     _init();
@@ -170,90 +170,92 @@ var User = function () {
 
     this.listAll = function (callback) {
         mapDb.query(
-            'SELECT * FROM ' + _table + ' ORDER BY ' + _ids[0],
-            function (err, rows) {
-                if (err) {
-                    throw(err);
-                }
+                    'SELECT * FROM ' + _table + ' ORDER BY ' + _ids[0],
+                    function (err, rows) {
+                        if (err) {
+                            throw(err);
+                        }
 
-                if (callback) {
-                    callback(rows);
-                }
-            }
-        );
+                        if (callback) {
+                            callback(rows);
+                        }
+                    }
+                    );
     };
 
     this.getAddress = function (userID , callback) {
         mapDb.query(
-            'SELECT f.farm_name as name, f.address ' +
-            'FROM user u ' +
-            'INNER JOIN farm f ' +
-            'ON f.farm_id = u.farm_id '+
-            'WHERE u.id_user = \''+userID+"\'",
-                        function (err, rows) {
-                if (err) {
-                    throw(err);
-                }
+                    'SELECT f.farm_name as name, f.address ' +
+                    'FROM user u ' +
+                    'INNER JOIN user_farm uf ' +
+                    'ON u.id_user = uf.user_id '+
+                    'INNER JOIN farm f ' +
+                    'ON f.farm_id = uf.farm_id '+
+                    'WHERE u.id_user = \''+parseInt(userID)+"\'",
+                    function (err, rows) {
+                        if (err) {
+                            throw(err);
+                        }
 
-                if (callback) {
-                    callback(rows);
-                }
-            }
-        );
+                        if (callback) {
+                            callback(rows);
+                        }
+                    }
+                    );
     };
 
     this.getAddressByName = function (userID , callback) {
         mapDb.query(
-            'SELECT f.address ' +
-            'FROM user u ' +
-            'INNER JOIN farm f ' +
-            'ON f.farm_id = u.farm_id '+
-            'WHERE u.name = \''+userID+"\'",
-            function (err, rows) {
-                if (err) {
-                    throw(err);
-                }
+                    'SELECT f.address ' +
+                    'FROM user u ' +
+                    'INNER JOIN farm f ' +
+                    'ON f.farm_id = u.farm_id '+
+                    'WHERE u.name = \''+userID+"\'",
+                    function (err, rows) {
+                        if (err) {
+                            throw(err);
+                        }
 
-                if (callback) {
-                    callback(rows);
-                }
-            }
-        );
+                        if (callback) {
+                            callback(rows);
+                        }
+                    }
+                    );
     };
 
     this.getUserAdrressList = function (callback) {
         mapDb.query(
-            'SELECT u.name, f.address ' +
-            'FROM user u ' +
-            'INNER JOIN farm f ' +
-            'ON f.farm_id = u.farm_id ',
-            function (err, rows) {
-                if (err) {
-                    throw(err);
-                }
+                    'SELECT u.name, f.address ' +
+                    'FROM user u ' +
+                    'INNER JOIN farm f ' +
+                    'ON f.farm_id = u.farm_id ',
+                    function (err, rows) {
+                        if (err) {
+                            throw(err);
+                        }
 
-                if (callback) {
-                    callback(rows);
-                }
-            }
-        );
+                        if (callback) {
+                            callback(rows);
+                        }
+                    }
+                    );
     };
 
     this.getUserByName = function (userName , callback) {
         mapDb.query(
-            'SELECT * ' +
-            'FROM user ' +
-            'WHERE name = \''+userName+"\'",
-            function (err, rows) {
-                if (err) {
-                    throw(err);
-                }
+                    'SELECT * ' +
+                    'FROM user ' +
+                    'WHERE name = \''+userName+"\'",
+                    function (err, rows) {
+                        if (err) {
+                            throw(err);
+                        }
 
-                if (callback) {
-                    callback(rows);
-                }
-            }
-        );
+                        if (callback) {
+                            callback(rows);
+                        }
+                    }
+                    );
     };
 
     var encrypt = function (str, salt) {
@@ -285,49 +287,45 @@ var User = function () {
 
     this.addNewEntry = function (data,callback) {
         var salt = makeid();
+        var farms = data.farms;
         mapDb.query(
-            "INSERT INTO user\
-            SET name = :user_name,\
-                password_hash = SHA1(:password),\
-                password_salt = :password_salt,\
-                farm_id = :farm_id",
-            {
-                name: data.user_name,
-                password_hash: data.password_hash,
-                password_salt: salt,
-                farm_id: data.farm_id
-            },
-            function (err, rows) {
-                if (err) {
-                    throw(err);
-                }
+                    "INSERT INTO user\
+                    SET name = :username,\
+                    password_hash = SHA1(:password),\
+                    password_salt = :password_salt,\
+                    farm_id = :farm_id",
+                    {
+                        username: data.username,
+                        password_hash: data.password,
+                        password_salt: salt,
+                        farm_id: data.farms[0]
+                    },
+                    function (err, rows) {
+                        if (err) {
+                            throw(err);
+                        }
+                        var query =  "INSERT INTO user_farm(user_id, farm_id)";
+                        query += farms.map(function(e){return  "(:user_id," + e + ")"}).join(", ");
+                        console.log(query);
+                        mapDb.query(
+                                    query
+                                   ,
+                                    {
+                                        user_id: rows.info.insertId,
+                                        farm_id: data.farm_id
+                                    },function(err2, rows2){
+                                        if (err2) {
+                                            throw(err2);
+                                        }
+                                        if (callback) {
+                                            callback(err2, rows2);
+                                        }
 
-                //values.farmID = rows.info.insertId;
 
-                if (callback) {
-                    callback(err, rows);
-                }
-            }
-        );
+                                    });
 
-        /*mapDb.query(
-            query,
-            values,
-            function (err, rows) {
-                if (err) {
-                    throw(err);
-                }
 
-                // autoincrement fetching
-                if (_autoIncrement) {
-                    _values[_ids[0]] = rows.info.insertId;
-                }
-
-                if (callback) {
-                    callback();
-                }
-            }
-        );*/
+                    });
     };
 
     function makeid() {
