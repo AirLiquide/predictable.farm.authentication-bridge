@@ -189,7 +189,7 @@ app.post('/login', function (req, res) {
             var pass = req.body.pass;
 
             var crypt = crypto.createHash('sha1');
-            crypt.update(pass);
+            crypt.update(pass + data.password_salt);
             var hashedPass = crypt.digest('hex');
             if (hashedPass == hash) {
 
