@@ -287,7 +287,7 @@ var User = function () {
 
     this.addNewEntry = function (data,callback) {
         var salt = makeid();
-        var farms = data.farms;
+        var farms = data.farms || [];
         mapDb.query(
                     "INSERT INTO user\
                     SET name = :username,\
@@ -298,21 +298,20 @@ var User = function () {
                         username: data.username,
                         password_hash: data.password,
                         password_salt: salt,
-                        farm_id: data.farms[0]
+                        farm_id:""
                     },
                     function (err, rows) {
                         if (err) {
                             throw(err);
                         }
-                        var query =  "INSERT INTO user_farm(user_id, farm_id)";
-                        query += farms.map(function(e){return  "(:user_id," + e + ")"}).join(", ");
+                        var query =  "INSERT INTO user_farm(user_id, farm_id) VALUES";
+                        query += farms.map(function(e){return  "(INT(:user_id)," + e + ")"}).join(", ");
                         console.log(query);
                         mapDb.query(
                                     query
                                    ,
                                     {
-                                        user_id: rows.info.insertId,
-                                        farm_id: data.farm_id
+                                        user_id: rows.info.insertId
                                     },function(err2, rows2){
                                         if (err2) {
                                             throw(err2);
