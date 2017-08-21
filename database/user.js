@@ -299,7 +299,7 @@ var User = function () {
                     "INSERT INTO user\
                     SET name = :username,\
                     password_hash = SHA1(:password),\
-                    password_salt = :password_salt:,\
+                    password_salt = :password_salt,\
                     farm_id = :farm_id",
                     {
                         username: data.username,
