@@ -193,15 +193,15 @@ app.post('/login', function (req, res) {
             var hashedPass = crypt.digest('hex');
             if (hashedPass == hash) {
 
-                user.getAddress(data.farm_id, function (farms) {
+                user.getFarms(data.id_user, function (farms) {
                     console.log(farms);
                     req.session.userName = data.name;
                     req.session.userId = data.id_user;
                     req.session.userFarms = farms;
-                    console.log(req.host);
+                    console.log(req.hostname);
 
                     for (var i = 0; i < farms.length; i++) {
-                        if (farms[i].address == req.host) {
+                        if (farms[i].address == req.hostname) {
                             res.redirect("/?message=connected");
                             return;
                         }
