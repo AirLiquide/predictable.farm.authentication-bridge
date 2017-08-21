@@ -291,7 +291,7 @@ var User = function () {
         mapDb.query(
                     "INSERT INTO user\
                     SET name = :username,\
-                    password_hash = SHA1(:password),\
+                    password_hash = SHA1(:password_hash),\
                     password_salt = :password_salt,\
                     farm_id = :farm_id",
                     {
