@@ -20,8 +20,8 @@ var options = {
     host: (global.env == 'prod') ? '35.158.33.67' : 'localhost',
     port: 3306,
     user: 'root',
-    password: '',
-    database: 'predictablefarm_cookies'
+    password: 'toor',
+    database: 'predictablefarm'
 };
 
 var sessionStore = new MySQLStore(options);
