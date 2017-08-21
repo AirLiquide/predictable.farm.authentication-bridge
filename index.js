@@ -216,6 +216,6 @@ app.post('/login', function (req, res) {
     //console.log(req.body);
 });
 
-app.listen((global.env == 'prod') ? 80 : 8000, function () {
+app.listen((global.env == 'prod') ? 80 : 8080, function () {
     console.log('listening on *:80');
 });
