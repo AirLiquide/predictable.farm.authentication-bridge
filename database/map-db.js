@@ -4,7 +4,7 @@ var MariaSql = require('mariasql');
 
 var DB_HOST = (global.env == 'prod')?'35.158.33.67':"localhost";
 var DB_USER = 'root';
-var DB_PASS = '';
+var DB_PASS = 'toor';
 var DB_NAME = 'predictablefarm';
 
 // Singleton handling
