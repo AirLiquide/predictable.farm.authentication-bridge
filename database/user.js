@@ -305,14 +305,12 @@ var User = function () {
                             throw(err);
                         }
                         var query =  "INSERT INTO user_farm(user_id, farm_id) VALUES";
-                        query += farms.map(function(e){return  "(INT(:user_id)," + e + ")"}).join(", ");
+                        query += farms.map(function(e){return  "(" + parseInt(rows.info.insertId) + "," + parseInt(e) + ")"}).join(", ");
                         console.log(query);
                         mapDb.query(
                                     query
                                    ,
-                                    {
-                                        user_id: rows.info.insertId
-                                    },function(err2, rows2){
+                                    {},function(err2, rows2){
                                         if (err2) {
                                             throw(err2);
                                         }
