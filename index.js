@@ -203,7 +203,6 @@ app.post('/login', function (req, res) {
                     for (var i = 0; i < farms.length; i++) {
                         if (farms[i].address == req.host) {
                             res.redirect("/?message=connected");
-
                             return;
                         }
                     }

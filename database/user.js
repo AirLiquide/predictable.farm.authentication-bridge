@@ -184,8 +184,15 @@ var User = function () {
     };
 
     this.getAddress = function (userID , callback) {
+        console.log('SELECT f.farm_name as name, f.address as address' +
+                    'FROM user u ' +
+                    'INNER JOIN user_farm uf ' +
+                    'ON u.id_user = uf.user_id '+
+                    'INNER JOIN farm f ' +
+                    'ON f.farm_id = uf.farm_id '+
+                    'WHERE u.id_user = \''+parseInt(userID)+"\'");
         mapDb.query(
-                    'SELECT f.farm_name as name, f.address ' +
+                    'SELECT f.farm_name as name, f.address as address' +
                     'FROM user u ' +
                     'INNER JOIN user_farm uf ' +
                     'ON u.id_user = uf.user_id '+
