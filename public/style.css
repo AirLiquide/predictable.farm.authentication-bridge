@@ -22,8 +22,8 @@ img{
 #logo img{
     display: block;
     margin:  1.2em auto 1.2em auto;
-    max-height: 50px;
-    max-width: 50px;
+    margin-bottom: 30px;
+    width: 100%;
 }
 
 #fast-connection-zone{
