@@ -179,8 +179,6 @@ app.post('/login', function (req, res) {
     console.log("login request", req.query);
     var user = new User();
     user.getUserByName(req.body.username, function (callbackData) {
-
-        console.log("req", req.body);
         var length = callbackData.length;
         if (length == 1) {
             var data = callbackData[0];
@@ -194,12 +192,10 @@ app.post('/login', function (req, res) {
             if (hashedPass == hash) {
 
                 user.getFarms(data.id_user, function (farms) {
-                    console.log(farms);
                     req.session.userName = data.name;
                     req.session.userId = data.id_user;
                     req.session.userFarms = farms;
                     console.log(req.hostname);
-
                     for (var i = 0; i < farms.length; i++) {
                         if (farms[i].address == req.hostname) {
                             res.redirect("/?message=connected");

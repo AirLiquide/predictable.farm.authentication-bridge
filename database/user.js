@@ -306,7 +306,6 @@ var User = function () {
                         }
                         var query =  "INSERT INTO user_farm(user_id, farm_id) VALUES";
                         query += farms.map(function(e){return  "(" + parseInt(rows.info.insertId) + "," + parseInt(e) + ")"}).join(", ");
-                        console.log(query);
                         mapDb.query(
                                     query
                                    ,
