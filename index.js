@@ -2,7 +2,17 @@
  * Created by admin on 20/03/2017.
  */
 
-global.env = process.env.NODE_ENV || 'dev';
+var inspct = require('util').inspect;
+
+
+global.env = 'prod';
+global.DB_HOST = 'localhost';
+global.DB_USER = 'root';
+global.DB_PASS = 'root';
+global.DB_NAME = 'predictablefarm';
+global.DB_SOCKET_PATH = '/var/run/mysqld/mysqld.sock';
+
+
 console.log("Environment : ", global.env);
 const crypto = require('crypto');
 var express = require('express');
@@ -17,11 +27,11 @@ var Farm = require('./database/farm');
 
 //TODO : change addresses
 var options = {
-    host: (global.env == 'prod') ? '35.158.33.67' : 'localhost',
-    port: 3306,
-    user: 'root',
-    password: 'toor',
-    database: 'predictablefarm'
+    host: global.DB_HOST,
+    socketPath: global.DB_SOCKET_PATH,
+    user: global.DB_USER,
+    password: global.DB_PASS,
+    database: global.DB_NAME
 };
 
 var sessionStore = new MySQLStore(options);
@@ -54,7 +64,7 @@ var basic = auth.basic({
     }, function (username, password, callback) {
         // Custom authentication
         // Use callback(error) if you want to throw async error.
-        callback(username === "admin" && password === "LaFactoryLedruRollin91");
+        callback(username === "admin" && password === "lafactory91avenueledrurollin");
     }
 );
 
@@ -69,29 +79,49 @@ app.use(function (req, res, next) {
 });
 
 
-//Registration, do not make public
-app.get('/register/Jxzipgg4gXM43x6y9M1JLCED9oLy13', function (req, res) {
-    res.sendFile(__dirname + '/index.html');
+app.get('/recipes', function (req, res) {
+        res.redirect('/recipes/');
 });
 
+
+
 app.get('/api/user/status', function (req, res) {
+
+
+    var myUid = req.session.userId;
     var myFarms = req.session.userFarms;
     var requestedFarm = req.query.url;
     var response;
 
+    //console.log("status req :" + inspct(req));
+
+
+    console.log("myUid :" + myUid);
+
+
+    console.log("/api/user/status "+ inspct(myFarms) +"/"+requestedFarm);
+
     if (!req.session.userId) {
+
+        console.log("myUid :" + myUid +" is not connected");
         res.json({status: "not_connected"});
         return;
     }
 
 
     if (!requestedFarm) {
+
+        console.log("no requestedFarm ");
         res.json({farms: myFarms});
         return;
     }
     else {
         for (var i = 0; i < myFarms.length; i++) {
+
+            console.log("myFarms["+i+"].address = "+ myFarms[i].address);
             if (myFarms[i].address == requestedFarm) {
+                console.log("access_granted");
+                
                 res.json({status: "access_granted"});
                 return;
             }
@@ -109,7 +139,7 @@ app.get('/logout', function (req, res) {
 
 //login to the dashboard
 app.get('/login', function (req, res) {
-    console.log(req.query);
+    console.log("login :" +req.query);
     res.render("login", {message: req.query.message});
 
 });
@@ -169,9 +199,6 @@ app.post('/admin/add-farm', function (req, res) {
         res.redirect("/admin?message=farm_registered");
 
     })
-
-
-
 });
 
 
@@ -186,18 +213,33 @@ app.post('/login', function (req, res) {
 
             var pass = req.body.pass;
 
+            var farmid = data.farm_id;
+
+            console.log("farm :" + farmid + " user_id : "+data.id_user+ " pass : "+pass) ;
+
             var crypt = crypto.createHash('sha1');
             crypt.update(pass + data.password_salt);
             var hashedPass = crypt.digest('hex');
-            if (hashedPass == hash) {
 
-                user.getFarms(data.id_user, function (farms) {
+            console.log("hashedPass :" + hashedPass + " hash in db : "+hash) ;
+            if (hashedPass == hash) 
+            {
+                console.log("password match !") ;
+                console.log("retrieve farm list for the user "+data.id_user) ;
+                
+                user.getAllFarms(data.id_user, function (farms) {
                     req.session.userName = data.name;
                     req.session.userId = data.id_user;
                     req.session.userFarms = farms;
-                    console.log(req.hostname);
+                    console.log("hostname :" + req.hostname);
+
                     for (var i = 0; i < farms.length; i++) {
-                        if (farms[i].address == req.hostname) {
+
+                    console.log("farm hostname :" + farms[i].address);
+                      // if (farms[i].address == req.hostname) 
+                        {
+
+                    console.log("database matching for hostname :" + req.hostname);
                             res.redirect("/?message=connected");
                             return;
                         }
@@ -208,7 +250,7 @@ app.post('/login', function (req, res) {
                 })
 
             }
-            else {
+           else {
                 console.log("erreur");
                 res.redirect("/?message=incorrect_password");
             }
@@ -221,6 +263,6 @@ app.post('/login', function (req, res) {
     //console.log(req.body);
 });
 
-app.listen((global.env == 'prod') ? 80 : 8080, function () {
-    console.log('listening on *:80');
+app.listen( 8080 , function () {
+    console.log('listening on *:8080');
 });

@@ -1,5 +1,6 @@
 var mapDb = require('./map-db');
 var crypto = require('crypto');
+var inspect = require('util').inspect;
 
 var User = function () {
     var _table = 'user';
@@ -204,6 +205,38 @@ var User = function () {
                     );
     };
 
+    this.getAllFarms = function (userID , callback) {
+        mapDb.query(
+                    'SELECT farm_id FROM user u WHERE u.id_user = ' +parseInt(userID),
+                    function (err, farms) {
+                        if (err) {
+                            throw(err);
+                        }
+                        else{
+                            if(farms.length > 0){
+
+                            console.log("farms :" + inspect(farms));
+                            mapDb.query(
+                                'SELECT farm_name as name, address as address ' +
+                                'FROM farm '+
+                                'WHERE farm_id = '+parseInt(farms[0].farm_id),
+                                function (err, rows) {
+                                    if (err) {
+                                        throw(err);
+                                    }
+            
+                                    if (callback) {
+                                        callback(rows);
+                                    }
+                                }
+                                ); 
+                            }
+                        }
+
+                    }
+                    );
+    };
+
     this.getAddressByName = function (userID , callback) {
         mapDb.query(
                     'SELECT f.address ' +
@@ -286,8 +319,20 @@ var User = function () {
     };
 
     this.addNewEntry = function (data,callback) {
+
+        console.log("addNewEntry :" + inspect(data));
         var salt = makeid();
+        if(Array.isArray(data.farms)) console.log("farm entry is an array" );
         var farms = data.farms || [];
+        var firstFarmId = 0;
+        if(farms.length == 1 ) {
+            firstFarmId = farms.reduce(parseInt);
+        } else{
+            var error = "too many farm selected , please select only  1";
+            throw(error);
+        }
+
+        console.log("firstFarmId :" + firstFarmId);
         mapDb.query(
                     "INSERT INTO user\
                     SET name = :username,\
@@ -298,7 +343,7 @@ var User = function () {
                         username: data.username,
                         password: data.password + salt,
                         password_salt: salt,
-                        farm_id:""
+                        farm_id:firstFarmId
                     },
                     function (err, rows) {
                         if (err) {
