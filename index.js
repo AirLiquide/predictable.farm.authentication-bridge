@@ -25,7 +25,7 @@ var User = require('./database/user');
 var Farm = require('./database/farm');
 
 
-//TODO : change addresses
+// TODO : change addresses
 var options = {
     host: global.DB_HOST,
     socketPath: global.DB_SOCKET_PATH,
@@ -36,14 +36,7 @@ var options = {
 
 var sessionStore = new MySQLStore(options);
 
-/*
- {
- farmId : { socket : farmSocket , dashboardSocket : socketDash }
- } */
-
-
 var app = express();
-
 
 app.use(session({
     key: 'session_cookie_name',
@@ -60,7 +53,7 @@ app.set('view engine', 'ejs');
 
 var auth = require('http-auth');
 var basic = auth.basic({
-        realm: "Simon Area."
+        realm: "Restricted Area."
     }, function (username, password, callback) {
         // Custom authentication
         // Use callback(error) if you want to throw async error.
@@ -78,50 +71,35 @@ app.use(function (req, res, next) {
     next();
 });
 
-
 app.get('/recipes', function (req, res) {
         res.redirect('/recipes/');
 });
 
-
-
 app.get('/api/user/status', function (req, res) {
-
 
     var myUid = req.session.userId;
     var myFarms = req.session.userFarms;
     var requestedFarm = req.query.url;
     var response;
 
-    //console.log("status req :" + inspct(req));
-
-
     console.log("myUid :" + myUid);
-
-
-    console.log("/api/user/status "+ inspct(myFarms) +"/"+requestedFarm);
+    console.log("/api/user/status "+ inspect(myFarms) +"/"+requestedFarm);
 
     if (!req.session.userId) {
-
         console.log("myUid :" + myUid +" is not connected");
         res.json({status: "not_connected"});
         return;
     }
 
-
     if (!requestedFarm) {
-
         console.log("no requestedFarm ");
         res.json({farms: myFarms});
         return;
-    }
-    else {
+    } else {
         for (var i = 0; i < myFarms.length; i++) {
-
             console.log("myFarms["+i+"].address = "+ myFarms[i].address);
             if (myFarms[i].address == requestedFarm) {
                 console.log("access_granted");
-                
                 res.json({status: "access_granted"});
                 return;
             }
@@ -141,30 +119,24 @@ app.get('/logout', function (req, res) {
 app.get('/login', function (req, res) {
     console.log("login :" +req.query);
     res.render("login", {message: req.query.message});
-
 });
-
 
 app.get('/admin', function (req, res) {
     var f = new Farm();
     f.getFarms(function (rows) {
         var farms = []
-
         rows.forEach(function (el) {
             farms.push({
                 farm_id: el.farm_id,
                 farm_name: el.farm_name
             })
             console.log(el)
-
         })
         res.render("admin", {
             farms: farms,
             message:req.query.message
         });
     })
-
-
 });
 
 app.post('/admin/add-user', function (req, res) {
@@ -181,9 +153,7 @@ app.post('/admin/add-user', function (req, res) {
         console.log(rows);
         res.redirect("/admin?message=user_registered");
     });
-
 });
-
 
 app.post('/admin/add-farm', function (req, res) {
     var data = req.body;
@@ -197,10 +167,8 @@ app.post('/admin/add-farm', function (req, res) {
             return;
         }
         res.redirect("/admin?message=farm_registered");
-
     })
 });
-
 
 app.post('/login', function (req, res) {
     console.log("login request", req.query);
@@ -212,9 +180,7 @@ app.post('/login', function (req, res) {
             var hash = data.password_hash;
 
             var pass = req.body.pass;
-
             var farmid = data.farm_id;
-
             console.log("farm :" + farmid + " user_id : "+data.id_user+ " pass : "+pass) ;
 
             var crypt = crypto.createHash('sha1');
@@ -222,8 +188,7 @@ app.post('/login', function (req, res) {
             var hashedPass = crypt.digest('hex');
 
             console.log("hashedPass :" + hashedPass + " hash in db : "+hash) ;
-            if (hashedPass == hash) 
-            {
+            if (hashedPass == hash) {
                 console.log("password match !") ;
                 console.log("retrieve farm list for the user "+data.id_user) ;
                 
@@ -234,35 +199,29 @@ app.post('/login', function (req, res) {
                     console.log("hostname :" + req.hostname);
 
                     for (var i = 0; i < farms.length; i++) {
-
-                    console.log("farm hostname :" + farms[i].address);
-                      // if (farms[i].address == req.hostname) 
+                        console.log("farm hostname :" + farms[i].address);
+                        // if (farms[i].address == req.hostname) 
                         {
-
-                    console.log("database matching for hostname :" + req.hostname);
+                            console.log("database matching for hostname :" + req.hostname);
                             res.redirect("/?message=connected");
                             return;
                         }
                     }
                     res.redirect("/?message=no_access_to_farm");
-
                     return;
                 })
 
-            }
-           else {
-                console.log("erreur");
+            } else {
+                console.log("error");
                 res.redirect("/?message=incorrect_password");
             }
-        }
-        else {
+        } else {
             res.redirect("/?message=unkown_user");
         }
 
     });
-    //console.log(req.body);
 });
 
-app.listen( 8080 , function () {
+app.listen(8080, function() {
     console.log('listening on *:8080');
 });

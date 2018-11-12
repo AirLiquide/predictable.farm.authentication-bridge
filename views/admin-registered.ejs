@@ -3,62 +3,47 @@
 <head>
     <meta charset="UTF-8">
     <title>Register</title>
-
     <link rel="stylesheet" type="text/css" href="/auth_public/style.css" media="screen"/>
     <meta name="google-signin-client_id" content="YOUR_CLIENT_ID.apps.googleusercontent.com">
 </head>
 <body>
-<div id="connection-zone">
-
-
-    <form action="/login" method="post">
-        <div id="logo">
-            <img src="/auth_public/assets/logo.png">
-        </div>
-        <div id="regular-connection-zone">
-
-            <div class="label">ID</div>
-            <input id="input-id" name="username" type="text" placeholder="e.g. , PredictableFarm">
-            <div class="label">Password</div>
-            <input id="input-pswd" name="pass" type="password" placeholder="e.g. , ••••••••••••">
-
-
-        </div>
-
-        <div id="submit-register" class="link-fill" >
-            <input type="submit"  value="Log in" />
-        </div>
-    </form>
-    <div id="connection-help">
+    <div id="connection-zone">
+        <form action="/login" method="post">
+            <div id="logo">
+                <img src="/auth_public/assets/logo.png">
+            </div>
+            <div id="regular-connection-zone">
+                <div class="label">ID</div>
+                <input id="input-id" name="username" type="text" placeholder="e.g. , PredictableFarm">
+                <div class="label">Password</div>
+                <input id="input-pswd" name="pass" type="password" placeholder="e.g. , ••••••••••••">
+            </div>
+            <div id="submit-register" class="link-fill">
+                <input type="submit" value="Log in"/>
+            </div>
+        </form>
+        <div id="connection-help"></div>
+        <script>
+            function onSuccess(googleUser) {
+                console.log('Logged in as: ' + googleUser.getBasicProfile().getName());
+            }
+            function onFailure(error) {
+                console.log(error);
+            }
+            function renderButton() {
+                gapi.signin2.render('my-signin2', {
+                    'scope': 'profile email',
+                    'width': 400,
+                    'height': 50,
+                    'longtitle': true,
+                    'theme': 'dark',
+                    'onsuccess': onSuccess,
+                    'onfailure': onFailure
+                });
+            }
+        </script>
+        <script src="https://apis.google.com/js/platform.js?onload=renderButton" async defer></script>
+        <script src="/auth_public/script.js"></script>
     </div>
-
-
-    <script>
-        function onSuccess(googleUser) {
-            console.log('Logged in as: ' + googleUser.getBasicProfile().getName());
-        }
-        function onFailure(error) {
-            console.log(error);
-        }
-        function renderButton() {
-            gapi.signin2.render('my-signin2', {
-                'scope': 'profile email',
-                'width': 400,
-                'height': 50,
-                'longtitle': true,
-                'theme': 'dark',
-                'onsuccess': onSuccess,
-                'onfailure': onFailure
-            });
-        }
-    </script>
-    <script src="https://apis.google.com/js/platform.js?onload=renderButton" async defer></script>
-    <script src="/auth_public/script.js"></script>
-</div>
-
 </body>
 </html>
-
-<script>
-    var faou = "test";
-</script>

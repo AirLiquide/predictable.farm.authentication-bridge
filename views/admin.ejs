@@ -3,87 +3,72 @@
 <head>
     <meta charset="UTF-8">
     <title>Register</title>
-
     <link rel="stylesheet" type="text/css" href="/auth_public/style.css" media="screen"/>
 </head>
 <body>
-<div id="connection-zone">
+    <div id="connection-zone">
+        <div id="logo">
+            <img src="/auth_public/img/predictable-farm-logo.png">
+        </div>
+        <% if (typeof(message) !== "undefined") {%>
+        <div class="notification">
+            <%= message %>
+        </div>
+        <% } %>
+        <form action="/admin/add-user" method="post">
+            <div id="add-user-zone">
+                <div class="label">Name</div>
+                <input id="input-id" name="username" type="text" placeholder="e.g. , Mr. Manager" required>
+                <div class="label">Password</div>
+                <input id="input-pswd" name="password" type="text" placeholder="e.g. , password" required>
+                <div class="label">Farm</div>
+                <select id="select" name="farms[]" multiple required>
+                    <% for(var i=0; i<farms.length; i++) {%>
+                    <option value= <%=farms[i].farm_id%>><%=farms[i].farm_name%></option>
+                    <% } %>
+                </select>
+            </div>
+            <div id="add-user" class="link-fill" >
+                <input type="submit" value="Add user"/>
+            </div>
+        </form>
+        <hr/>
+        <form action="/admin/add-farm" method="post">
+            <div id="add-farm-zone">
+                <div class="label">Farm name</div>
+                <input id="input-id" name="farm_name" type="text" placeholder="e.g. , PredictableFarm" required>
+                <div class="label">Web address</div>
+                <input id="input-pswd" name="address" type="text" placeholder="e.g. , example.prefictable.farm" required>
+                <div class="label">Secret key</div>
+                <input id="input-pswd" name="secret_key" type="text" placeholder="e.g. , kvkdsvkjdfnfvk" required>
+            </div>
+            <div id="add-farm" class="link-fill" >
+                <input type="submit"  value="Add farm" />
+            </div>
+        </form>
+        <div id="connection-help"></div>
 
-    <div id="logo">
-        <img src="/auth_public/img/predictable-farm-logo.png">
+        <script>
+            function onSuccess(googleUser) {
+                console.log('Logged in as: ' + googleUser.getBasicProfile().getName());
+            }
+            function onFailure(error) {
+                console.log(error);
+            }
+            function renderButton() {
+                gapi.signin2.render('my-signin2', {
+                    'scope': 'profile email',
+                    'width': 400,
+                    'height': 50,
+                    'longtitle': true,
+                    'theme': 'dark',
+                    'onsuccess': onSuccess,
+                    'onfailure': onFailure
+                });
+            }
+        </script>
+        <script src="https://apis.google.com/js/platform.js?onload=renderButton" async defer></script>
+        <script src="/auth_public/script.js"></script>
     </div>
-    <% if (typeof(message) !== "undefined") {%>
-    <div class="notification">
-        <%= message %>
-    </div>
-    <% } %>
-    <form action="/admin/add-user" method="post">
-
-        <div id="add-user-zone">
-
-            <div class="label">Name</div>
-            <input id="input-id" name="username" type="text" placeholder="e.g. , Mr. Manager" required>
-            <div class="label">Password</div>
-            <input id="input-pswd" name="password" type="text" placeholder="e.g. , password" required>
-            <div class="label">Farm</div>
-            <select id="select" name="farms[]" multiple required>
-                <% for(var i=0; i<farms.length; i++) {%>
-                <option value= <%=farms[i].farm_id%>><%=farms[i].farm_name%></option>
-                <% } %>
-            </select>
-        </div>
-
-        <div id="add-user" class="link-fill" >
-            <input type="submit"  value="Add user" />
-        </div>
-    </form>
-    <hr/>
-    <form action="/admin/add-farm" method="post">
-
-        <div id="add-farm-zone">
-
-            <div class="label">Farm name</div>
-            <input id="input-id" name="farm_name" type="text" placeholder="e.g. , PredictableFarm" required>
-            <div class="label">Web address</div>
-            <input id="input-pswd" name="address" type="text" placeholder="e.g. , example.prefictable.farm" required>
-            <div class="label">Secret key</div>
-            <input id="input-pswd" name="secret_key" type="text" placeholder="e.g. , kvkdsvkjdfnfvk" required>
-        </div>
-
-        <div id="add-farm" class="link-fill" >
-            <input type="submit"  value="Add farm" />
-        </div>
-    </form>
-    <div id="connection-help">
-    </div>
-
-
-    <script>
-        function onSuccess(googleUser) {
-            console.log('Logged in as: ' + googleUser.getBasicProfile().getName());
-        }
-        function onFailure(error) {
-            console.log(error);
-        }
-        function renderButton() {
-            gapi.signin2.render('my-signin2', {
-                'scope': 'profile email',
-                'width': 400,
-                'height': 50,
-                'longtitle': true,
-                'theme': 'dark',
-                'onsuccess': onSuccess,
-                'onfailure': onFailure
-            });
-        }
-    </script>
-    <script src="https://apis.google.com/js/platform.js?onload=renderButton" async defer></script>
-    <script src="/auth_public/script.js"></script>
-</div>
-
 </body>
 </html>
-
-<script>
-    var faou = "test";
-</script>

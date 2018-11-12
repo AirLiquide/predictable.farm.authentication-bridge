@@ -1,4 +1,5 @@
 var mapDb = require('./map-db');
+
 var Farm = function () {
     var self = this;
 
