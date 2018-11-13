@@ -37,6 +37,8 @@ Run from docker : `docker run -p 80:80 -p 3000:3000 -e NODE_ENV=prod Dockerfile`
 
 Needs a MariaDB database to run, to handle cookies for http queries. You can find the default .sql files to use in the docs.
 
+For both environments, you should put your **Facebook App ID** for FB connect (see `index.html`)
+
 # Database structure :
 
 |  farm |

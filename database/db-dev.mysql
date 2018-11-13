@@ -1,7 +1,7 @@
 CREATE DATABASE predictablefarm;
 CREATE DATABASE predictablefarm_cookies;
 
-CREATE USER 'predictable_user'@'localhost' IDENTIFIED BY 'ilab';
+CREATE USER 'predictable_user'@'localhost' IDENTIFIED BY 'my_password';
 GRANT ALL PRIVILEGES ON map.* TO 'predictable_user'@'localhost';
 FLUSH PRIVILEGES;
 
