@@ -35,6 +35,12 @@ global.DB_PASS = 'root';
 global.DB_NAME = 'predictablefarm';
 global.DB_SOCKET_PATH = '/var/run/mysqld/mysqld.sock';
 
+try {
+    var CONFIG = require('./config');
+} catch (e) {
+    console.log('⚠ Config file missing. Do not forget to copy `config.json.dist` to `config.json`')
+    return;
+}
 
 console.log("Environment : ", global.env);
 const crypto = require('crypto');
@@ -80,7 +86,7 @@ var basic = auth.basic({
     }, function (username, password, callback) {
         // Custom authentication
         // Use callback(error) if you want to throw async error.
-        callback(username === "admin" && password === "lafactory91avenueledrurollin");
+        callback(username === CONFIG.admin_area.user && password === CONFIG.admin_area.password);
     }
 );
 
@@ -245,6 +251,6 @@ app.post('/login', function (req, res) {
     });
 });
 
-app.listen(8080, function() {
-    console.log('listening on *:8080');
+app.listen(CONFIG.port, function() {
+    console.log('listening on *:' + CONFIG.port);
 });

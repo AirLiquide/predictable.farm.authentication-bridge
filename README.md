@@ -5,7 +5,7 @@ Node application used to proxy requests to the correct cloud environment.
 
 Handle routing for http and websocket queries.
 
-To be forwarded, a farm/user **MUST** be added to the database. At the moment there is no admin pannel, the user needs to be added from the terminal.
+To be forwarded, a farm/user **MUST** be added to the database. At the moment there is no admin panel, the user needs to be added from the terminal.
 
 # Technologies
 
@@ -18,21 +18,21 @@ Based on NodeJS with :
 
 Run from source : `node index.js`
 
-Run from docker : `docker run -p 80:80 -p 3000:3000 registry.gitlab.com/briceculas/predictable-farm-bridge`
+Run from docker : `docker run -p 80:80 -p 3000:3000 Dockerfile`
 
 **Ports** :
 
- - web : 8080
+ - web : 8080 (configurable)
  - socket : 3000
 
 # Production environment
 
 Run from source : `node index.js`
 
-Run from docker : `docker run -p 80:80 -p 3000:3000 -e NODE_ENV=prod registry.gitlab.com/briceculas/predictable-farm-bridge`
+Run from docker : `docker run -p 80:80 -p 3000:3000 -e NODE_ENV=prod Dockerfile`
 
 **Ports** :
- - web : 80
+ - web : 80 (configurable)
  - socket : 3000
 
 Needs a MariaDB database to run, to handle cookies for http queries. You can find the default .sql files to use in the docs.
