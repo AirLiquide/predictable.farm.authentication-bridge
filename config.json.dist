@@ -1,0 +1,7 @@
+{
+    "port": 8080,
+    "admin_area": {
+        "user": "admin",
+        "password" : "test"
+    }
+}
