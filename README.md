@@ -64,5 +64,3 @@ Needs a MariaDB database to run, to handle cookies for http queries. You can fin
 Our work is licensed under the MIT license. See license.txt.
 
 **This work uses sofware that is licensed under Apache 2.0 License, the GNU GPL v2.0 License. The respective files have kept their original license notices.**
-
-Documentation complète :  https://docs.google.com/document/d/1_SxayDKO30vMWrVTCxJiv7SGgChcJP5q2pF0UntlBh4/
